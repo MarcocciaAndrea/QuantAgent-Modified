@@ -8,6 +8,7 @@ from typing import Dict
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models import BaseChatModel
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_qwq import ChatQwen
 from langgraph.prebuilt import ToolNode
@@ -57,13 +58,13 @@ class TradingGraph:
     def _get_api_key(self, provider: str = "openai") -> str:
         """
         Get API key with proper validation and error handling.
-        
+
         Args:
-            provider: The provider name ("openai", "anthropic", or "qwen")
-        
+            provider: The provider name ("openai", "anthropic", "qwen", or "gemini")
+
         Returns:
             str: The API key for the specified provider
-            
+
         Raises:
             ValueError: If API key is missing or invalid
         """
@@ -113,11 +114,11 @@ class TradingGraph:
         elif provider == "qwen":
             # First check if API key is provided in config
             api_key = self.config.get("qwen_api_key")
-            
+
             # If not in config, check environment variable
             if not api_key:
                 api_key = os.environ.get("DASHSCOPE_API_KEY")
-            
+
             # Validate the API key
             if not api_key:
                 raise ValueError(
@@ -125,14 +126,35 @@ class TradingGraph:
                     "1. Set environment variable: export DASHSCOPE_API_KEY='your-key-here'\n"
                     "2. Update the config with: config['qwen_api_key'] = 'your-key-here'\n"
                 )
-            
+
             if api_key == "":
                 raise ValueError(
                     "Please provide your actual Qwen API key. "
                     "You can get one from: https://dashscope.console.aliyun.com/"
                 )
+        elif provider == "gemini":
+            # First check if API key is provided in config
+            api_key = self.config.get("gemini_api_key")
+
+            # If not in config, check environment variable
+            if not api_key:
+                api_key = os.environ.get("GOOGLE_API_KEY")
+
+            # Validate the API key
+            if not api_key:
+                raise ValueError(
+                    "Gemini API key not found. Please set it using one of these methods:\n"
+                    "1. Set environment variable: export GOOGLE_API_KEY='your-key-here'\n"
+                    "2. Update the config with: config['gemini_api_key'] = 'your-key-here'\n"
+                )
+
+            if api_key == "":
+                raise ValueError(
+                    "Please provide your actual Gemini API key. "
+                    "You can get one from: https://aistudio.google.com/apikey"
+                )
         else:
-            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', or 'qwen'")
+            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', 'qwen', or 'gemini'")
         
         return api_key
 
@@ -141,12 +163,12 @@ class TradingGraph:
     ) -> BaseChatModel:
         """
         Create an LLM instance based on the provider.
-        
+
         Args:
-            provider: The provider name ("openai", "anthropic", or "qwen")
-            model: The model name (e.g., "gpt-4o", "claude-3-5-sonnet-20241022", "qwen-vl-max-latest")
+            provider: The provider name ("openai", "anthropic", "qwen", or "gemini")
+            model: The model name (e.g., "gpt-4o", "claude-3-5-sonnet-20241022", "qwen-vl-max-latest", "gemini-2.0-flash-exp")
             temperature: The temperature setting for the model
-            
+
         Returns:
             BaseChatModel: An instance of the appropriate LLM class
         """
@@ -174,8 +196,14 @@ class TradingGraph:
                 api_key=api_key,
                 max_retries=4,
             )
+        elif provider == "gemini":
+            return ChatGoogleGenerativeAI(
+                model=model,
+                temperature=temperature,
+                google_api_key=api_key,
+            )
         else:
-            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', or 'qwen'")
+            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', 'qwen', or 'gemini'")
 
     # def _set_tool_nodes(self) -> Dict[str, ToolNode]:
     #     """
@@ -231,10 +259,10 @@ class TradingGraph:
         """
         Update the API key in the config and refresh LLMs.
         This method is called by the web interface when API key is updated.
-        
+
         Args:
             api_key (str): The new API key
-            provider (str): The provider name ("openai" or "anthropic"), defaults to "openai"
+            provider (str): The provider name ("openai", "anthropic", "qwen", or "gemini"), defaults to "openai"
         """
         if provider == "openai":
             # Update the config with the new API key
@@ -251,11 +279,17 @@ class TradingGraph:
         elif provider == "qwen":
             # Update the config with the new API key
             self.config["qwen_api_key"] = api_key
-            
+
             # Also update the environment variable for consistency
             os.environ["DASHSCOPE_API_KEY"] = api_key
+        elif provider == "gemini":
+            # Update the config with the new API key
+            self.config["gemini_api_key"] = api_key
+
+            # Also update the environment variable for consistency
+            os.environ["GOOGLE_API_KEY"] = api_key
         else:
-            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', or 'qwen'")
+            raise ValueError(f"Unsupported provider: {provider}. Must be 'openai', 'anthropic', 'qwen', or 'gemini'")
         
         # Refresh the LLMs with the new API key
         self.refresh_llms()
