@@ -513,18 +513,18 @@ class WebTradingAnalyzer:
                         "valid": False,
                         "error": "❌ Invalid API Key: The Anthropic API key is not set. Please update it in the Settings section.",
                     }
-                
+
                 client = Anthropic(api_key=api_key)
-                
+
                 # Make a simple test call
                 _ = client.messages.create(
                     model="claude-haiku-4-5-20251001",
                     max_tokens=5,
                     messages=[{"role": "user", "content": "Hello"}],
                 )
-                
+
                 provider_name = "Anthropic"
-            else:  # qwen
+            elif provider == "qwen":
                 from langchain_qwq import ChatQwen
                 api_key = os.environ.get("DASHSCOPE_API_KEY") or self.config.get("qwen_api_key", "")
                 if not api_key:
@@ -532,12 +532,26 @@ class WebTradingAnalyzer:
                         "valid": False,
                         "error": "❌ Invalid API Key: The Qwen API key is not set. Please update it in the Settings section.",
                     }
-                
+
                 # Make a simple test call using LangChain
                 llm = ChatQwen(model="qwen-flash", api_key=api_key)
                 _ = llm.invoke([("user", "Hello")])
-                
+
                 provider_name = "Qwen"
+            else:  # gemini
+                from langchain_google_genai import ChatGoogleGenerativeAI
+                api_key = os.environ.get("GOOGLE_API_KEY") or self.config.get("gemini_api_key", "")
+                if not api_key:
+                    return {
+                        "valid": False,
+                        "error": "❌ Invalid API Key: The Gemini API key is not set. Please update it in the Settings section.",
+                    }
+
+                # Make a simple test call using LangChain
+                llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
+                _ = llm.invoke([("user", "Hello")])
+
+                provider_name = "Gemini"
             return {"valid": True, "message": f"{provider_name} API key is valid"}
 
         except Exception as e:
@@ -550,8 +564,10 @@ class WebTradingAnalyzer:
                 provider_name = "OpenAI"
             elif provider == "anthropic":
                 provider_name = "Anthropic"
-            else:
+            elif provider == "qwen":
                 provider_name = "Qwen"
+            else:
+                provider_name = "Gemini"
 
             if (
                 "authentication" in error_msg.lower()
@@ -868,8 +884,8 @@ def update_provider():
         data = request.get_json()
         provider = data.get("provider", "openai")
 
-        if provider not in ["openai", "anthropic", "qwen"]:
-            return jsonify({"error": "Provider must be 'openai', 'anthropic', or 'qwen'"})
+        if provider not in ["openai", "anthropic", "qwen", "gemini"]:
+            return jsonify({"error": "Provider must be 'openai', 'anthropic', 'qwen', or 'gemini'"})
 
         print(f"Updating provider to: {provider}")
 
@@ -892,12 +908,17 @@ def update_provider():
                 analyzer.config["agent_llm_model"] = "qwen3-max"
             if not analyzer.config["graph_llm_model"].startswith("qwen"):
                 analyzer.config["graph_llm_model"] = "qwen3-vl-plus"
-            
+        elif provider == "gemini":
+            # Set default Gemini models if not already set to Gemini models
+            if not analyzer.config["agent_llm_model"].startswith("gemini"):
+                analyzer.config["agent_llm_model"] = "gemini-2.5-flash"
+            if not analyzer.config["graph_llm_model"].startswith("gemini"):
+                analyzer.config["graph_llm_model"] = "gemini-2.5-flash"
         else:
             # Set default OpenAI models if not already set to OpenAI models
-            if analyzer.config["agent_llm_model"].startswith(("claude", "qwen")):
+            if analyzer.config["agent_llm_model"].startswith(("claude", "qwen", "gemini")):
                 analyzer.config["agent_llm_model"] = "gpt-4o-mini"
-            if analyzer.config["graph_llm_model"].startswith(("claude", "qwen")):
+            if analyzer.config["graph_llm_model"].startswith(("claude", "qwen", "gemini")):
                 analyzer.config["graph_llm_model"] = "gpt-4o"
         
         analyzer.trading_graph.config.update(analyzer.config)
@@ -926,8 +947,8 @@ def update_api_key():
         if not new_api_key:
             return jsonify({"error": "API key is required"})
 
-        if provider not in ["openai", "anthropic", "qwen"]:
-            return jsonify({"error": "Provider must be 'openai', 'anthropic', or 'qwen'"})
+        if provider not in ["openai", "anthropic", "qwen", "gemini"]:
+            return jsonify({"error": "Provider must be 'openai', 'anthropic', 'qwen', or 'gemini'"})
 
         print(f"Updating {provider} API key to: {new_api_key[:8]}...{new_api_key[-4:]}")
 
@@ -938,6 +959,8 @@ def update_api_key():
             os.environ["ANTHROPIC_API_KEY"] = new_api_key
         elif provider == "qwen":
             os.environ["DASHSCOPE_API_KEY"] = new_api_key
+        elif provider == "gemini":
+            os.environ["GOOGLE_API_KEY"] = new_api_key
 
         # Update the API key in the trading graph
         analyzer.trading_graph.update_api_key(new_api_key, provider=provider)
@@ -972,6 +995,11 @@ def get_api_key_status():
             # Fallback to config if not in environment
             if not api_key and hasattr(analyzer, 'config'):
                 api_key = analyzer.config.get("qwen_api_key", "")
+        elif provider == "gemini":
+            api_key = os.environ.get("GOOGLE_API_KEY", "")
+            # Fallback to config if not in environment
+            if not api_key and hasattr(analyzer, 'config'):
+                api_key = analyzer.config.get("gemini_api_key", "")
         else:
             api_key = ""
         

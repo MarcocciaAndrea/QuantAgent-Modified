@@ -1091,6 +1091,7 @@
                                         <option value="openai" selected>OpenAI</option>
                                         <option value="anthropic">Claude (Anthropic)</option>
                                         <option value="qwen">Qwen</option>
+                                        <option value="gemini">Google Gemini</option>
                                     </select>
                                 </div>
                                 
@@ -1126,7 +1127,18 @@
                                         </button>
                                     </div>
                                 </div>
-                                    
+
+                                <!-- Gemini API Key Input -->
+                                <div class="form-group" id="geminiApiKeyGroup" style="display: none;">
+                                    <label class="form-label">Google Gemini API Key</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="geminiApiKeyInput" placeholder="Enter your Gemini API key">
+                                        <button class="btn btn-outline-primary" type="button" onclick="updateApiKey('gemini')">
+                                            <i class="fas fa-save"></i> Update
+                                        </button>
+                                    </div>
+                                </div>
+
                                     <!-- API Key Status Messages -->
                                     <div id="apiKeyStatus" class="alert alert-info mt-2" style="display: none;">
                                         <i class="fas fa-info-circle"></i>
@@ -1782,12 +1794,14 @@
              const openaiGroup = document.getElementById('openaiApiKeyGroup');
              const anthropicGroup = document.getElementById('anthropicApiKeyGroup');
              const qwenGroup = document.getElementById('qwenApiKeyGroup');
-             
+             const geminiGroup = document.getElementById('geminiApiKeyGroup');
+
              // Hide all groups first
              openaiGroup.style.display = 'none';
              anthropicGroup.style.display = 'none';
              qwenGroup.style.display = 'none';
-             
+             geminiGroup.style.display = 'none';
+
              // Show the selected provider's group
              if (provider === 'openai') {
                  openaiGroup.style.display = 'block';
@@ -1795,6 +1809,8 @@
                  anthropicGroup.style.display = 'block';
              } else if (provider === 'qwen') {
                  qwenGroup.style.display = 'block';
+             } else if (provider === 'gemini') {
+                 geminiGroup.style.display = 'block';
              }
              
              // Update provider on backend
@@ -1831,7 +1847,7 @@
          function updateApiKey(provider) {
              const providerSelect = document.getElementById('llmProviderSelect');
              const actualProvider = provider || providerSelect.value;
-             
+
              let apiKey;
              if (actualProvider === 'openai') {
                  apiKey = document.getElementById('openaiApiKeyInput').value.trim();
@@ -1839,8 +1855,10 @@
                  apiKey = document.getElementById('anthropicApiKeyInput').value.trim();
              } else if (actualProvider === 'qwen') {
                  apiKey = document.getElementById('qwenApiKeyInput').value.trim();
+             } else if (actualProvider === 'gemini') {
+                 apiKey = document.getElementById('geminiApiKeyInput').value.trim();
              }
-             
+
              if (!apiKey) {
                  showApiKeyError('Please enter an API key');
                  return;
