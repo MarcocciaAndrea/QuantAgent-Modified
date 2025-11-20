@@ -166,7 +166,7 @@ class TradingGraph:
 
         Args:
             provider: The provider name ("openai", "anthropic", "qwen", or "gemini")
-            model: The model name (e.g., "gpt-4o", "claude-3-5-sonnet-20241022", "qwen-vl-max-latest", "gemini-2.0-flash-exp")
+            model: The model name (e.g., "gpt-4o", "claude-3-5-sonnet-20241022", "qwen-vl-max-latest", "gemini-2.5-flash", "gemini-2.5-pro")
             temperature: The temperature setting for the model
 
         Returns:

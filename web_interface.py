@@ -548,7 +548,7 @@ class WebTradingAnalyzer:
                     }
 
                 # Make a simple test call using LangChain
-                llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", google_api_key=api_key)
+                llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
                 _ = llm.invoke([("user", "Hello")])
 
                 provider_name = "Gemini"
@@ -911,9 +911,9 @@ def update_provider():
         elif provider == "gemini":
             # Set default Gemini models if not already set to Gemini models
             if not analyzer.config["agent_llm_model"].startswith("gemini"):
-                analyzer.config["agent_llm_model"] = "gemini-2.0-flash-exp"
+                analyzer.config["agent_llm_model"] = "gemini-2.5-flash"
             if not analyzer.config["graph_llm_model"].startswith("gemini"):
-                analyzer.config["graph_llm_model"] = "gemini-2.0-flash-exp"
+                analyzer.config["graph_llm_model"] = "gemini-2.5-flash"
         else:
             # Set default OpenAI models if not already set to OpenAI models
             if analyzer.config["agent_llm_model"].startswith(("claude", "qwen", "gemini")):
