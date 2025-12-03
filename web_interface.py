@@ -13,6 +13,7 @@ from openai import OpenAI
 
 import static_util
 from trading_graph import TradingGraph
+from asset_config import DEFAULT_ASSETS, SYMBOL_MAPPING, INTERVAL_MAPPING
 
 app = Flask(__name__)
 
@@ -29,52 +30,14 @@ class WebTradingAnalyzer:
         # Ensure data dir exists
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
-        # Available assets and their display names
-        self.asset_mapping = {
-            "SPX": "S&P 500",
-            "BTC": "Bitcoin",
-            "GC": "Gold Futures",
-            "NQ": "Nasdaq Futures",
-            "CL": "Crude Oil",
-            "ES": "E-mini S&P 500",
-            "DJI": "Dow Jones",
-            "QQQ": "Invesco QQQ Trust",
-            "VIX": "Volatility Index",
-            "DXY": "US Dollar Index",
-            "AAPL": "Apple Inc.",  # New asset
-            "TSLA": "Tesla Inc.",  # New asset
-        }
+        # Load assets from configuration file
+        self.asset_mapping = DEFAULT_ASSETS.copy()
 
-        # Yahoo Finance symbol mapping
-        self.yfinance_symbols = {
-            "SPX": "^GSPC",  # S&P 500
-            "BTC": "BTC-USD",  # Bitcoin
-            "GC": "GC=F",  # Gold Futures
-            "NQ": "NQ=F",  # Nasdaq Futures
-            "CL": "CL=F",  # Crude Oil
-            "ES": "ES=F",  # E-mini S&P 500
-            "DJI": "^DJI",  # Dow Jones
-            "QQQ": "QQQ",  # Invesco QQQ Trust
-            "VIX": "^VIX",  # Volatility Index
-            "DXY": "DX-Y.NYB",  # US Dollar Index
-        }
+        # Load symbol mappings from configuration file
+        self.yfinance_symbols = SYMBOL_MAPPING.copy()
 
-        # Yahoo Finance interval mapping
-        self.yfinance_intervals = {
-            "1m": "1m",
-            "5m": "5m",
-            "15m": "15m",
-            "30m": "30m",
-            "1h": "1h",
-            "4h": "4h",  # yfinance supports 4h natively!
-            "1d": "1d",
-            "1w": "1wk",
-            "1mo": "1mo",
-        }
-
-        # Load persisted custom assets
-        self.custom_assets_file = self.data_dir / "custom_assets.json"
-        self.custom_assets = self.load_custom_assets()
+        # Load interval mappings from configuration file
+        self.yfinance_intervals = INTERVAL_MAPPING.copy()
 
     def fetch_yfinance_data(
         self, symbol: str, interval: str, start_date: str, end_date: str
@@ -597,35 +560,6 @@ class WebTradingAnalyzer:
             else:
                 return {"valid": False, "error": f"❌ API Key Error: {error_msg}"}
 
-    def load_custom_assets(self) -> list:
-        """Load custom assets from persistent JSON file."""
-        try:
-            if self.custom_assets_file.exists():
-                with open(self.custom_assets_file, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    if isinstance(data, list):
-                        return data
-            return []
-        except Exception as e:
-            print(f"Error loading custom assets: {e}")
-            return []
-
-    def save_custom_asset(self, symbol: str) -> bool:
-        """Save a custom asset symbol persistently (avoid duplicates)."""
-        try:
-            symbol = symbol.strip()
-            if not symbol:
-                return False
-            if symbol in self.custom_assets:
-                return True  # already present
-            self.custom_assets.append(symbol)
-            # write to file
-            with open(self.custom_assets_file, "w", encoding="utf-8") as f:
-                json.dump(self.custom_assets, f, indent=2)
-            return True
-        except Exception as e:
-            print(f"Error saving custom asset '{symbol}': {e}")
-            return False
 
 
 # Initialize the analyzer
@@ -795,33 +729,6 @@ def get_files(asset, timeframe):
         return jsonify({"error": str(e)})
 
 
-@app.route("/api/save-custom-asset", methods=["POST"])
-def save_custom_asset():
-    """Save a custom asset symbol server-side for persistence."""
-    try:
-        data = request.get_json()
-        symbol = (data.get("symbol") or "").strip()
-        if not symbol:
-            return jsonify({"success": False, "error": "Symbol required"}), 400
-
-        ok = analyzer.save_custom_asset(symbol)
-        if not ok:
-            return jsonify({"success": False, "error": "Failed to save symbol"}), 500
-
-        return jsonify({"success": True, "symbol": symbol})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
-@app.route("/api/custom-assets", methods=["GET"])
-def custom_assets():
-    """Return server-persisted custom assets."""
-    try:
-        return jsonify({"custom_assets": analyzer.custom_assets or []})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 @app.route("/api/assets")
 def get_assets():
     """API endpoint to get available assets."""
@@ -833,10 +740,6 @@ def get_assets():
             asset_list.append(
                 {"code": asset, "name": analyzer.asset_mapping.get(asset, asset)}
             )
-
-        # Include server-persisted custom assets at the end
-        for custom in analyzer.custom_assets:
-            asset_list.append({"code": custom, "name": custom})
 
         return jsonify({"assets": asset_list})
 
