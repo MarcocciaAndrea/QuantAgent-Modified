@@ -944,46 +944,121 @@
                                 <!-- Asset Selection -->
                                 <div class="form-group">
                                     <label class="form-label">
-                                        <i class="fas fa-coins"></i> Asset
+                                        <i class="fas fa-coins"></i> Asset Selection
                                     </label>
-                                    <div class="asset-button-grid" id="assetButtonGrid">
-                                        <button type="button" class="asset-btn" data-asset="BTC" onclick="selectAsset(this, 'BTC')">
-                                            <i class="fas fa-bitcoin"></i> BTC
-                                        </button>
-                                        <button type="button" class="asset-btn" data-asset="ETH" onclick="selectAsset(this, 'ETH')">
-                                            <i class="fab fa-ethereum"></i> ETH
-                                        </button>
-                                        <button type="button" class="asset-btn" data-asset="AAPL" onclick="selectAsset(this, 'AAPL')">
-                                            <i class="fas fa-apple-alt"></i> AAPL
-                                        </button>
-                                        <button type="button" class="asset-btn" data-asset="GOOGL" onclick="selectAsset(this, 'GOOGL')">
-                                            <i class="fab fa-google"></i> GOOGL
-                                        </button>
-                                        <button type="button" class="asset-btn" data-asset="MSFT" onclick="selectAsset(this, 'MSFT')">
-                                            <i class="fab fa-microsoft"></i> MSFT
-                                        </button>
-                                        <button type="button" class="asset-btn" data-asset="TSLA" onclick="selectAsset(this, 'TSLA')">
-                                            <i class="fas fa-car"></i> TSLA
-                                        </button>
-                                        <button type="button" class="asset-btn custom-asset-btn" id="customAssetBtn" onclick="showCustomAssetInput()">
-                                            <i class="fas fa-plus"></i> Custom
-                                        </button>
-                                    </div>
-                                    
+
+                                    <!-- Dropdown for popular assets -->
+                                    <select class="form-select" id="assetSelect" onchange="handleAssetSelection()">
+                                        <option value="" selected disabled>Choose from popular assets or enter custom ticker below</option>
+                                        <optgroup label="🪙 Cryptocurrencies">
+                                            <option value="BTC-USD">Bitcoin (BTC-USD)</option>
+                                            <option value="ETH-USD">Ethereum (ETH-USD)</option>
+                                            <option value="BNB-USD">Binance Coin (BNB-USD)</option>
+                                            <option value="XRP-USD">Ripple (XRP-USD)</option>
+                                            <option value="ADA-USD">Cardano (ADA-USD)</option>
+                                            <option value="DOGE-USD">Dogecoin (DOGE-USD)</option>
+                                            <option value="SOL-USD">Solana (SOL-USD)</option>
+                                        </optgroup>
+                                        <optgroup label="⚜️ Precious Metals & Commodities">
+                                            <option value="GC=F">Gold Futures (GC=F)</option>
+                                            <option value="SI=F">Silver Futures (SI=F)</option>
+                                            <option value="CL=F">Crude Oil (CL=F)</option>
+                                            <option value="NG=F">Natural Gas (NG=F)</option>
+                                            <option value="HG=F">Copper (HG=F)</option>
+                                            <option value="PL=F">Platinum (PL=F)</option>
+                                        </optgroup>
+                                        <optgroup label="🇺🇸 Major US Tech Stocks">
+                                            <option value="AAPL">Apple Inc. (AAPL)</option>
+                                            <option value="MSFT">Microsoft Corp. (MSFT)</option>
+                                            <option value="GOOGL">Alphabet Inc. (GOOGL)</option>
+                                            <option value="AMZN">Amazon.com Inc. (AMZN)</option>
+                                            <option value="NVDA">NVIDIA Corp. (NVDA)</option>
+                                            <option value="META">Meta Platforms Inc. (META)</option>
+                                            <option value="TSLA">Tesla Inc. (TSLA)</option>
+                                            <option value="NFLX">Netflix Inc. (NFLX)</option>
+                                            <option value="AMD">Advanced Micro Devices (AMD)</option>
+                                            <option value="INTC">Intel Corp. (INTC)</option>
+                                        </optgroup>
+                                        <optgroup label="🏦 Financial & Other S&P 500">
+                                            <option value="BRK-B">Berkshire Hathaway (BRK-B)</option>
+                                            <option value="JPM">JPMorgan Chase (JPM)</option>
+                                            <option value="V">Visa Inc. (V)</option>
+                                            <option value="MA">Mastercard Inc. (MA)</option>
+                                            <option value="BAC">Bank of America (BAC)</option>
+                                            <option value="WMT">Walmart Inc. (WMT)</option>
+                                            <option value="JNJ">Johnson & Johnson (JNJ)</option>
+                                            <option value="PG">Procter & Gamble (PG)</option>
+                                            <option value="UNH">UnitedHealth Group (UNH)</option>
+                                            <option value="HD">Home Depot (HD)</option>
+                                            <option value="DIS">Walt Disney Co. (DIS)</option>
+                                            <option value="XOM">Exxon Mobil Corp. (XOM)</option>
+                                            <option value="CVX">Chevron Corp. (CVX)</option>
+                                            <option value="KO">Coca-Cola Co. (KO)</option>
+                                            <option value="PFE">Pfizer Inc. (PFE)</option>
+                                            <option value="CSCO">Cisco Systems (CSCO)</option>
+                                            <option value="PYPL">PayPal Holdings (PYPL)</option>
+                                            <option value="ADBE">Adobe Inc. (ADBE)</option>
+                                            <option value="CRM">Salesforce Inc. (CRM)</option>
+                                            <option value="ORCL">Oracle Corp. (ORCL)</option>
+                                        </optgroup>
+                                        <optgroup label="🇪🇺 European Stocks (Stoxx 50)">
+                                            <option value="ASML.AS">ASML Holding (ASML.AS)</option>
+                                            <option value="MC.PA">LVMH (MC.PA)</option>
+                                            <option value="OR.PA">L'Oréal (OR.PA)</option>
+                                            <option value="SAP.DE">SAP SE (SAP.DE)</option>
+                                            <option value="SAN.PA">Sanofi (SAN.PA)</option>
+                                            <option value="TTE.PA">TotalEnergies (TTE.PA)</option>
+                                            <option value="SIE.DE">Siemens AG (SIE.DE)</option>
+                                            <option value="AIR.PA">Airbus SE (AIR.PA)</option>
+                                            <option value="DTE.DE">Deutsche Telekom (DTE.DE)</option>
+                                            <option value="ALV.DE">Allianz SE (ALV.DE)</option>
+                                            <option value="BNP.PA">BNP Paribas (BNP.PA)</option>
+                                        </optgroup>
+                                        <optgroup label="📊 ETFs and Indices">
+                                            <option value="SPY">SPDR S&P 500 ETF (SPY)</option>
+                                            <option value="QQQ">Invesco QQQ Trust (QQQ)</option>
+                                            <option value="DIA">SPDR Dow Jones ETF (DIA)</option>
+                                            <option value="IWM">iShares Russell 2000 (IWM)</option>
+                                            <option value="VTI">Vanguard Total Stock Market (VTI)</option>
+                                            <option value="VOO">Vanguard S&P 500 (VOO)</option>
+                                            <option value="VEA">Vanguard FTSE Developed Markets (VEA)</option>
+                                            <option value="VWO">Vanguard FTSE Emerging Markets (VWO)</option>
+                                        </optgroup>
+                                        <optgroup label="💱 Forex Pairs">
+                                            <option value="EURUSD=X">EUR/USD (EURUSD=X)</option>
+                                            <option value="GBPUSD=X">GBP/USD (GBPUSD=X)</option>
+                                            <option value="USDJPY=X">USD/JPY (USDJPY=X)</option>
+                                            <option value="AUDUSD=X">AUD/USD (AUDUSD=X)</option>
+                                            <option value="USDCAD=X">USD/CAD (USDCAD=X)</option>
+                                            <option value="USDCHF=X">USD/CHF (USDCHF=X)</option>
+                                        </optgroup>
+                                    </select>
+
                                     <!-- Custom Asset Input -->
-                                    <div id="customAssetDiv" class="mt-3" style="display: none;">
-                                        <div class="alert alert-info">
-                                            <h6><i class="fas fa-plus-circle"></i> Custom Asset Symbol</h6>
-                                            <p class="mb-2"><strong>💡 Examples:</strong> NQ (Nasdaq-100 Futures), ZN (10-Year Treasury), etc.</p>
-                                            <p class="mb-0"><strong>📝 Format:</strong> Enter the Yahoo Finance symbol for your asset</p>
+                                    <div id="customAssetDiv" class="mt-3">
+                                        <div class="alert alert-info" style="background: linear-gradient(135deg, rgba(86, 39, 216, 0.05) 0%, rgba(36, 16, 86, 0.05) 100%); border-left: 4px solid var(--etrade-purple);">
+                                            <h6 style="color: var(--etrade-purple); font-weight: 600; margin-bottom: 0.75rem;">
+                                                <i class="fas fa-plus-circle"></i> Enter Custom Ticker Symbol
+                                            </h6>
+                                            <p class="mb-2" style="color: var(--gray-700);"><strong>💡 Note:</strong> Enter any valid Yahoo Finance ticker symbol</p>
+                                            <p class="mb-0" style="color: var(--gray-600); font-size: 0.9rem;"><strong>📝 Examples:</strong> AAPL, TSLA, BTC-USD, GC=F, ^GSPC</p>
                                         </div>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="customAssetInput" placeholder="Enter symbol (e.g., NQ=F, ZN=F, ^VIX)">
+                                            <input type="text" class="form-control" id="customAssetInput" placeholder="e.g., AAPL or BTC-USD or GC=F">
                                             <button class="btn btn-outline-primary" type="button" onclick="confirmCustomAsset()">
-                                                <i class="fas fa-check"></i> Confirm
+                                                <i class="fas fa-check"></i> Use This Ticker
                                             </button>
                                         </div>
-                                        <small class="form-text text-muted">Use Yahoo Finance symbols. For futures, add =F suffix (e.g., NQ=F)</small>
+                                        <small class="form-text text-muted" style="margin-top: 0.5rem; display: block;">
+                                            💡 Tip: Visit <a href="https://finance.yahoo.com/" target="_blank" style="color: var(--etrade-purple); text-decoration: underline;">Yahoo Finance</a> to find ticker symbols
+                                        </small>
+                                    </div>
+
+                                    <!-- Selected Asset Display -->
+                                    <div id="selectedAssetDisplay" class="mt-3" style="display: none;">
+                                        <div class="alert alert-success" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%); border-left: 4px solid #22c55e; color: #166534;">
+                                            <i class="fas fa-check-circle"></i> <strong>Selected Asset:</strong> <span id="selectedAssetText"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -1206,164 +1281,83 @@
         // Global variables
         let currentAsset = '';
         let currentTimeframe = '';
-        
+        let selectedAsset = '';
+        let selectedTimeframe = '1h'; // Default timeframe
+
         // Persisted state keys
         const STORAGE_KEYS = {
-            CUSTOM_ASSETS: 'quantagent_custom_assets',
             SELECTED_ASSET: 'quantagent_selected_asset',
             SELECTED_TIMEFRAME: 'quantagent_selected_timeframe'
         };
 
-        // Add or render a custom asset button into the grid
-        function addCustomAssetButton(symbol, isServerLoaded = false) {
-            const grid = document.getElementById('assetButtonGrid');
-            if (!grid) return;
+        // Handle asset selection from dropdown
+        function handleAssetSelection() {
+            const assetSelect = document.getElementById('assetSelect');
+            const selectedAssetValue = assetSelect.value;
 
-            // Prevent duplicates (check existing data-asset values)
-            const existing = Array.from(grid.querySelectorAll('.asset-btn')).some(btn => btn.dataset.asset === symbol);
-            if (existing) return;
+            if (selectedAssetValue) {
+                selectedAsset = selectedAssetValue;
 
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'asset-btn';
-            btn.dataset.asset = symbol;
-            btn.innerHTML = `<i class="fas fa-tag"></i> ${symbol}`;
-            btn.addEventListener('click', () => selectAsset(btn, symbol));
-
-            // Insert before the "Custom" button if present
-            const customBtn = document.getElementById('customAssetBtn');
-            if (customBtn && customBtn.parentNode === grid) {
-                grid.insertBefore(btn, customBtn);
-            } else {
-                grid.appendChild(btn);
-            }
-
-            // If loaded from server or localStorage, do not auto-select unless it matches stored selection
-            const storedSelected = localStorage.getItem(STORAGE_KEYS.SELECTED_ASSET);
-            if (storedSelected === symbol) {
-                // mimic click to set active and store
-                btn.click();
-            }
-        }
-
-        // Load custom assets from localStorage and server, render them
-        function loadCustomAssets() {
-            // Load from localStorage first (fast)
-            try {
-                const local = localStorage.getItem(STORAGE_KEYS.CUSTOM_ASSETS);
-                if (local) {
-                    const list = JSON.parse(local);
-                    list.forEach(sym => addCustomAssetButton(sym, false));
+                // Store in localStorage
+                try {
+                    localStorage.setItem(STORAGE_KEYS.SELECTED_ASSET, selectedAsset);
+                } catch (e) {
+                    console.warn('Could not persist selected asset', e);
                 }
-            } catch (e) {
-                console.warn('Failed to parse local custom assets', e);
-            }
 
-            // Then attempt to load server-persisted custom assets and merge
-            fetch('/api/custom-assets')
-                .then(r => r.json())
-                .then(data => {
-                    if (Array.isArray(data.custom_assets)) {
-                        data.custom_assets.forEach(sym => addCustomAssetButton(sym, true));
-                        // Sync server list into localStorage (merge, dedupe)
-                        try {
-                            const local = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOM_ASSETS) || '[]');
-                            const merged = Array.from(new Set([...(local || []), ...data.custom_assets]));
-                            localStorage.setItem(STORAGE_KEYS.CUSTOM_ASSETS, JSON.stringify(merged));
-                        } catch (e) {
-                            console.warn('Failed to sync custom assets to localStorage', e);
-                        }
-                    }
-                })
-                .catch(err => {
-                    // Not fatal - server might not be reachable
-                    console.warn('Could not fetch server custom assets', err);
-                });
+                // Show selected asset display
+                const selectedAssetDisplay = document.getElementById('selectedAssetDisplay');
+                const selectedAssetText = document.getElementById('selectedAssetText');
+                selectedAssetText.textContent = selectedAssetValue + ' - ' + assetSelect.options[assetSelect.selectedIndex].text;
+                selectedAssetDisplay.style.display = 'block';
+
+                // Clear custom input
+                document.getElementById('customAssetInput').value = '';
+
+                console.log('Selected asset:', selectedAsset);
+            }
         }
+
 
         // Override confirmCustomAsset to create a persistent custom asset and persist to server/localStorage
         function confirmCustomAsset() {
             const customAssetEl = document.getElementById('customAssetInput');
-            const customAsset = customAssetEl.value.trim();
+            const customAsset = customAssetEl.value.trim().toUpperCase();
 
             if (!customAsset) {
                 alert('Please enter a custom asset symbol.');
                 return;
             }
 
-            // Normalize (trim)
+            // Normalize (trim and uppercase)
             const symbol = customAsset;
 
-            // Save to localStorage list
+            // Set as selected asset
+            selectedAsset = symbol;
+
+            // Save to localStorage
             try {
-                const listRaw = localStorage.getItem(STORAGE_KEYS.CUSTOM_ASSETS);
-                const list = listRaw ? JSON.parse(listRaw) : [];
-                if (!list.includes(symbol)) {
-                    list.push(symbol);
-                    localStorage.setItem(STORAGE_KEYS.CUSTOM_ASSETS, JSON.stringify(list));
-                }
+                localStorage.setItem(STORAGE_KEYS.SELECTED_ASSET, selectedAsset);
             } catch (e) {
-                console.warn('Could not persist custom asset to localStorage', e);
+                console.warn('Could not persist selected asset', e);
             }
 
-            // Persist to server (best-effort)
-            fetch('/api/save-custom-asset', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol })
-            }).then(r => r.json())
-              .then(resp => {
-                  if (!resp.success) {
-                      console.warn('Server did not save custom asset', resp);
-                  }
-              }).catch(err => {
-                  console.warn('Error saving custom asset to server', err);
-              });
+            // Show selected asset display
+            const selectedAssetDisplay = document.getElementById('selectedAssetDisplay');
+            const selectedAssetText = document.getElementById('selectedAssetText');
+            selectedAssetText.textContent = symbol + ' (Custom Ticker)';
+            selectedAssetDisplay.style.display = 'block';
 
-            // Add button and select it
-            addCustomAssetButton(symbol);
-            // Select the new asset: find button and click
-            const grid = document.getElementById('assetButtonGrid');
-            const newBtn = Array.from(grid.querySelectorAll('.asset-btn')).find(b => b.dataset.asset === symbol);
-            if (newBtn) {
-                newBtn.click();
-            }
-
-            // Hide custom asset input
-            document.getElementById('customAssetDiv').style.display = 'none';
+            // Reset dropdown selection
+            document.getElementById('assetSelect').selectedIndex = 0;
 
             // Clear input
             customAssetEl.value = '';
 
             // Notify user
-            // Use a non-blocking notification (replace alert with console + subtle DOM message if desired)
-            console.log(`Custom asset "${symbol}" selected and persisted`);
+            console.log(`Custom asset "${symbol}" selected`);
         }
 
-        // Updated selectAsset to persist selection to localStorage
-        function selectAsset(button, asset) {
-            // Remove active class from all asset buttons
-            document.querySelectorAll('.asset-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Add active class to clicked button
-            button.classList.add('active');
-
-            // Store selected asset
-            selectedAsset = asset;
-            try {
-                localStorage.setItem(STORAGE_KEYS.SELECTED_ASSET, asset);
-            } catch (e) {
-                console.warn('Could not persist selected asset', e);
-            }
-
-            // Hide custom asset input if it was showing
-            const cav = document.getElementById('customAssetDiv');
-            if (cav) cav.style.display = 'none';
-
-            console.log('Selected asset:', asset);
-        }
 
         // Persist timeframe selection as well
         function selectTimeframe(button, timeframe) {
@@ -1391,24 +1385,21 @@
             // Set default dates
             const now = new Date();
             const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-            
+
             // Format dates for input fields
             const formatDate = (date) => {
                 return date.toISOString().split('T')[0];
             };
-            
+
             // Set default start date (30 days ago)
             document.getElementById('startDate').value = formatDate(thirtyDaysAgo);
-            
+
             // Set default end date (today)
             document.getElementById('endDate').value = formatDate(now);
-            
+
             // Apply the current-time checkbox behavior immediately on load
             // (this will disable & populate end date/time if the checkbox is checked by default)
             try { handleUseCurrentTimeChange(); } catch (e) { console.warn('handleUseCurrentTimeChange not available yet', e); }
-            
-            // Load custom assets and server-synced assets
-            loadCustomAssets();
 
             // Restore selected timeframe (if saved)
             try {
@@ -1419,38 +1410,38 @@
                         tfBtn.classList.add('active');
                         selectedTimeframe = savedTF;
                     }
+                } else {
+                    // Default to 1h
+                    const defaultTimeframeBtn = document.querySelector('[data-timeframe="1h"]');
+                    if (defaultTimeframeBtn) {
+                        defaultTimeframeBtn.classList.add('active');
+                        selectedTimeframe = '1h';
+                    }
                 }
             } catch (e) {
                 console.warn('Could not restore timeframe from localStorage', e);
             }
 
-            // Restore selected asset (if saved). If it is a custom asset that hasn't been added yet,
-            // add it and then select it (addCustomAssetButton handles checking duplicates).
+            // Restore selected asset (if saved)
             try {
                 const savedAsset = localStorage.getItem(STORAGE_KEYS.SELECTED_ASSET);
                 if (savedAsset) {
-                    // Try to find an existing button
-                    let btn = Array.from(document.querySelectorAll('.asset-btn')).find(b => b.dataset.asset === savedAsset);
-                    if (!btn) {
-                        // Add it as custom and then select
-                        addCustomAssetButton(savedAsset, false);
-                        btn = Array.from(document.querySelectorAll('.asset-btn')).find(b => b.dataset.asset === savedAsset);
-                    }
-                    if (btn) {
-                        btn.classList.add('active');
-                        selectedAsset = savedAsset;
-                    }
-                } else {
-                    // fallback defaults from original code
-                    const defaultTimeframeBtn = document.querySelector('[data-timeframe="1h"]');
-                    if (defaultTimeframeBtn && !selectedTimeframe) {
-                        defaultTimeframeBtn.classList.add('active');
-                        selectedTimeframe = '1h';
-                    }
-                    const defaultAssetBtn = document.querySelector('[data-asset="BTC"]');
-                    if (defaultAssetBtn && !selectedAsset) {
-                        defaultAssetBtn.classList.add('active');
-                        selectedAsset = 'BTC';
+                    selectedAsset = savedAsset;
+
+                    // Try to find it in the dropdown
+                    const assetSelect = document.getElementById('assetSelect');
+                    const optionExists = Array.from(assetSelect.options).some(opt => opt.value === savedAsset);
+
+                    if (optionExists) {
+                        // Select it in the dropdown
+                        assetSelect.value = savedAsset;
+                        handleAssetSelection();
+                    } else {
+                        // It's a custom asset, show it in the selected display
+                        const selectedAssetDisplay = document.getElementById('selectedAssetDisplay');
+                        const selectedAssetText = document.getElementById('selectedAssetText');
+                        selectedAssetText.textContent = savedAsset + ' (Custom Ticker)';
+                        selectedAssetDisplay.style.display = 'block';
                     }
                 }
             } catch (e) {
@@ -1458,34 +1449,34 @@
             }
 
             document.getElementById('useCurrentTime').addEventListener('change', handleUseCurrentTimeChange);
-            
+
             // Set up date/time validation
             const dateInputs = ['startDate', 'startTime', 'endDate', 'endTime'];
             dateInputs.forEach(id => {
                 document.getElementById(id).addEventListener('change', validateDateRange);
             });
-            
+
             // Initialize current time update
             setInterval(updateCurrentTime, 1000);
-            
+
             // Add keyboard navigation for timeframe selector
             document.addEventListener('keydown', function(e) {
                 const activeBtn = document.querySelector('.timeframe-btn.active');
                 if (!activeBtn) return;
-                
+
                 const buttons = Array.from(document.querySelectorAll('.timeframe-btn'));
                 const currentIndex = buttons.indexOf(activeBtn);
-                
+
                 if (e.key === 'ArrowLeft' && currentIndex > 0) {
                     buttons[currentIndex - 1].click();
                 } else if (e.key === 'ArrowRight' && currentIndex < buttons.length - 1) {
                     buttons[currentIndex + 1].click();
                 }
             });
-            
+
             // Check API key status on page load
             checkApiKeyStatus();
-            
+
             // Set initial provider dropdown state
             const savedProvider = localStorage.getItem('quantagent_provider') || 'openai';
             if (savedProvider) {
@@ -1530,106 +1521,6 @@
                     // Silently fail - don't show error to user
                 });
         }
-        
-                 // Global variables
-         let selectedAsset = '';
-         let selectedTimeframe = '1h'; // Default timeframe
-         
-         function selectAsset(button, asset) {
-             // Remove active class from all asset buttons
-             document.querySelectorAll('.asset-btn').forEach(btn => {
-                 btn.classList.remove('active');
-             });
-             
-             // Add active class to clicked button
-             button.classList.add('active');
-             
-             // Store selected asset
-             selectedAsset = asset;
-             try {
-                 localStorage.setItem(STORAGE_KEYS.SELECTED_ASSET, asset);
-             } catch (e) {
-                 console.warn('Could not persist selected asset', e);
-             }
-
-             // Hide custom asset input if it was showing
-             const cav = document.getElementById('customAssetDiv');
-             if (cav) cav.style.display = 'none';
-
-             console.log('Selected asset:', asset);
-         }
-         
-         function showCustomAssetInput() {
-             // Remove active class from all asset buttons
-             document.querySelectorAll('.asset-btn').forEach(btn => {
-                 btn.classList.remove('active');
-             });
-             
-             // Show custom asset input
-             document.getElementById('customAssetDiv').style.display = 'block';
-             document.getElementById('customAssetInput').focus();
-             
-             // Clear selected asset
-             selectedAsset = '';
-         }
-         
-         function confirmCustomAsset() {
-             const customAssetEl = document.getElementById('customAssetInput');
-             const customAsset = customAssetEl.value.trim();
-
-             if (!customAsset) {
-                 alert('Please enter a custom asset symbol.');
-                 return;
-             }
-
-             // Normalize (trim)
-             const symbol = customAsset;
-
-             // Save to localStorage list
-             try {
-                 const listRaw = localStorage.getItem(STORAGE_KEYS.CUSTOM_ASSETS);
-                 const list = listRaw ? JSON.parse(listRaw) : [];
-                 if (!list.includes(symbol)) {
-                     list.push(symbol);
-                     localStorage.setItem(STORAGE_KEYS.CUSTOM_ASSETS, JSON.stringify(list));
-                 }
-             } catch (e) {
-                 console.warn('Could not persist custom asset to localStorage', e);
-             }
-
-             // Persist to server (best-effort)
-             fetch('/api/save-custom-asset', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ symbol })
-             }).then(r => r.json())
-               .then(resp => {
-                   if (!resp.success) {
-                       console.warn('Server did not save custom asset', resp);
-                   }
-               }).catch(err => {
-                   console.warn('Error saving custom asset to server', err);
-               });
-
-            // Add button and select it
-            addCustomAssetButton(symbol);
-            // Select the new asset: find button and click
-            const grid = document.getElementById('assetButtonGrid');
-            const newBtn = Array.from(grid.querySelectorAll('.asset-btn')).find(b => b.dataset.asset === symbol);
-            if (newBtn) {
-                newBtn.click();
-            }
-
-            // Hide custom asset input
-            document.getElementById('customAssetDiv').style.display = 'none';
-
-            // Clear input
-            customAssetEl.value = '';
-
-            // Notify user
-            // Use a non-blocking notification (replace alert with console + subtle DOM message if desired)
-            console.log(`Custom asset "${symbol}" selected and persisted`);
-         }
         
                  function runAnalysis() {
              const dataSource = 'live'; // Always use live data
