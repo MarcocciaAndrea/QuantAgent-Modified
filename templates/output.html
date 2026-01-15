@@ -579,18 +579,8 @@
                             {% if results.pattern_analysis %}
                                 <div class="auto-beautify">{{ results.pattern_analysis | safe }}</div>
                             {% else %}
-                                <ul>
-                                    <li><strong>Descending Triangle:</strong> Lower highs with flat support</li>
-                                    <li><strong>Structure:</strong> Converging trend lines</li>
-                                    <li><strong>Trend:</strong> Prior downtrend continuation</li>
-                                    <li><strong>Symmetry:</strong> Consistent pattern formation</li>
-                                </ul>
+                                <p class="text-muted">No pattern analysis available</p>
                             {% endif %}
-                        </div>
-                        
-                        <div class="form-group">
-                            <h5>Pattern Reliability:</h5>
-                            <p>Descending triangle has a high success rate for bearish continuation patterns. Key support level at 110,000.</p>
                         </div>
                     </div>
                     
@@ -611,45 +601,38 @@
                 </div>
             </div>
              
-                         <!-- Trend Agent: Trend Analysis + Trend Chart -->
+            <!-- Trend Agent: Trend Analysis + Trend Chart -->
             <div class="large-panel">
                 <h3 class="large-panel-title">
                     <i class="fas fa-chart-line"></i> Trend Agent
                 </h3>
-                <div class="large-panel-content">
-                    <div class="panel-group-2">
-                        <div class="panel">
-                            <h4 class="panel-title">
-                                <i class="fas fa-analytics"></i> Trend Analysis
-                            </h4>
-                            <div class="form-group">
-                                <h5>Trend Strength Indicators:</h5>
-                                <ul>
-                                    <li><strong>ADX:</strong> 28.5 - Moderate trend strength</li>
-                                    <li><strong>RSI Divergence:</strong> Positive divergence detected</li>
-                                    <li><strong>Momentum:</strong> Declining momentum indicators</li>
-                                    <li><strong>Volume:</strong> Decreasing volume on rallies</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="form-group">
-                                <h5>Likely Downtrend Signal:</h5>
-                                <p>Consistent downward slope and inability to break resistance suggest continued bearish pressure. Short-term trend likely to continue downward.</p>
-                            </div>
+                <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+                    <!-- Left Panel: Trend Analysis -->
+                    <div class="panel" style="flex: 1;">
+                        <h4 class="panel-title">
+                            <i class="fas fa-chart-area"></i> Trend Analysis
+                        </h4>
+                        <div class="form-group">
+                            {% if results.trend_analysis %}
+                                <div class="auto-beautify">{{ results.trend_analysis | safe }}</div>
+                            {% else %}
+                                <p class="text-muted">No trend analysis available</p>
+                            {% endif %}
                         </div>
-                        
-                        <div class="panel">
-                            <h4 class="panel-title">
-                                <i class="fas fa-chart-line"></i> Trend Visualization
-                            </h4>
-                            <div class="image-container">
-                                {% if results.trend_chart %}
-                                    <img src="data:image/png;base64,{{ results.trend_chart }}" alt="Trend Analysis Chart" class="analysis-image">
-                                {% else %}
-                                    <img src="/api/images/trend" alt="Trend Analysis Chart" class="analysis-image">
-                                {% endif %}
-                                <p class="chart-caption">Support & Resistance Lines</p>
-                            </div>
+                    </div>
+                    
+                    <!-- Right Panel: Trend Visualization -->
+                    <div class="panel" style="flex: 1;">
+                        <h4 class="panel-title">
+                            <i class="fas fa-chart-line"></i> Trend Visualization
+                        </h4>
+                        <div class="image-container">
+                            {% if results.trend_chart %}
+                                <img src="data:image/png;base64,{{ results.trend_chart }}" alt="Trend Analysis Chart" class="analysis-image">
+                            {% else %}
+                                <img src="/api/images/trend" alt="Trend Analysis Chart" class="analysis-image">
+                            {% endif %}
+                            <p class="chart-caption">Support & Resistance Lines</p>
                         </div>
                     </div>
                 </div>

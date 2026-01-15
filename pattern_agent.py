@@ -141,20 +141,20 @@ def create_pattern_agent(tool_llm, graph_llm, toolkit):
             # Create messages - ensure HumanMessage has valid content
             # For Anthropic, SystemMessage is extracted separately, but messages array must have at least one message
             human_msg = HumanMessage(content=image_prompt)
-            
+
             # Verify HumanMessage content is valid
             if not human_msg.content:
                 raise ValueError("HumanMessage content is empty")
             if isinstance(human_msg.content, list) and len(human_msg.content) == 0:
                 raise ValueError("HumanMessage content list is empty")
-            
+
             messages = [
                 SystemMessage(
                     content="You are a trading pattern recognition assistant tasked with analyzing candlestick charts."
                 ),
                 human_msg,
             ]
-            
+
             try:
                 final_response = invoke_with_retry(
                     graph_llm.invoke,
@@ -166,7 +166,9 @@ def create_pattern_agent(tool_llm, graph_llm, toolkit):
                 # This can happen when SystemMessage extraction leaves empty messages array
                 if "at least one message" in error_str.lower():
                     # Retry with only HumanMessage (SystemMessage will be lost but Anthropic should work)
-                    print("Retrying with HumanMessage only due to Anthropic message conversion issue...")
+                    print(
+                        "Retrying with HumanMessage only due to Anthropic message conversion issue..."
+                    )
                     final_response = invoke_with_retry(
                         graph_llm.invoke,
                         [human_msg],
@@ -180,6 +182,9 @@ def create_pattern_agent(tool_llm, graph_llm, toolkit):
         return {
             "messages": messages + [final_response],
             "pattern_report": final_response.content,
+            "pattern_image": pattern_image_b64,
+            "pattern_image_filename": "kline_chart.png",
+            "pattern_image_description": "Candlestick pattern analysis chart",
         }
 
     return pattern_agent_node
