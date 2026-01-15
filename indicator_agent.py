@@ -115,9 +115,14 @@ def create_indicator_agent(llm, toolkit):
         else:
             report_content = "Indicator analysis completed, but no detailed report was generated."
 
+        if isinstance(report_content, list):
+            report_text = report_content[0].get('text', "Indicator analysis completed.")
+        else:
+            report_text = report_content
+
         return {
             "messages": messages,
-            "indicator_report": report_content if report_content else "Indicator analysis completed.",
+            "indicator_report": report_text if report_text else "Indicator analysis completed.",
         }
 
     return indicator_agent_node
